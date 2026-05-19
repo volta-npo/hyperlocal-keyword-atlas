@@ -76,7 +76,11 @@ export const domain = {
         "Competitors noted",
         "Difficulty confidence set",
         "Title/meta suggestions generated",
-        "SEO brief exported"
+        "SEO brief exported",
+        "Service/geography/intent modeled",
+        "Source confidence scored",
+        "POST scoring payload validated",
+        "SERP evidence attached"
     ],
     "artifacts": [
         "Keyword CSV",
@@ -88,6 +92,33 @@ export const domain = {
         "No unsupported search-volume claims",
         "Difficulty confidence required"
     ],
-    "sampleClient": "Oak & Olive Cafe"
+    "sampleClient": "Oak & Olive Cafe",
+    "modules": [
+        { "name": "Keyword scoring API", "description": "POST-based scoring for submitted keyword sets with confidence, intent, and evidence validation." },
+        { "name": "Service/geography model", "description": "Service line, city, neighborhood, modifier, language, and seasonal segment taxonomy." },
+        { "name": "SERP source confidence", "description": "Source type, recency, authority, competitor fit, and local-pack evidence scoring." },
+        { "name": "Content brief generator", "description": "Title/meta, FAQ, internal link, proof need, and CTA guidance for every cluster." }
+    ],
+    "saas": {
+        "playbooks": [
+            "Local keyword discovery workflow",
+            "SERP evidence qualification",
+            "Service-area landing page brief",
+            "Source confidence audit"
+        ],
+        "automations": [
+            "Keyword cluster scoring",
+            "SERP confidence calculation",
+            "Title/meta pack validation",
+            "Rust API release fingerprinting"
+        ],
+        "revenueModel": "Agency keyword workspace with paid service-area packs, API scoring, and brief exports",
+        "integrationTargets": [
+            "Google Search Console export",
+            "Google Business Profile categories",
+            "CSV SERP tools",
+            "CMS landing page briefs"
+        ]
+    }
 };
 //# sourceMappingURL=domain.js.map

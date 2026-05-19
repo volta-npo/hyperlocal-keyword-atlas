@@ -6,3 +6,5 @@ node_modules/
 coverage/
 dist/
 .tmp/
+target/
+backend/rust/target/

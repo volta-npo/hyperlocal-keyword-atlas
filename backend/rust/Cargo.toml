@@ -1,0 +1,13 @@
+[package]
+name = "hyperlocal_keyword_atlas_backend"
+version = "0.1.0"
+edition = "2021"
+description = "Rust release-gate engine for Hyperlocal Keyword Atlas"
+license = "MIT"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "hyperlocal-keyword-atlas-backend"
+path = "src/main.rs"

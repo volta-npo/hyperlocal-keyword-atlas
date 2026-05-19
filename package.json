@@ -1,0 +1,35 @@
+{
+  "name": "@volta-oss/hyperlocal-keyword-atlas",
+  "version": "3.0.0",
+  "private": false,
+  "type": "module",
+  "description": "A keyword research framework for neighborhoods, not national search markets.",
+  "scripts": {
+    "test": "node --test",
+    "start": "python3 -m http.server 4173",
+    "validate": "node --test",
+    "certify": "node --test test/v3.test.js",
+    "test:all": "node --test"
+  },
+  "keywords": [
+    "digital-equity",
+    "local-first",
+    "marketing-content",
+    "oss",
+    "v3-production",
+    "volta"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/volta-npo/28-hyperlocal-keyword-atlas.git"
+  },
+  "homepage": "https://volta-npo.github.io/28-hyperlocal-keyword-atlas/",
+  "bugs": {
+    "url": "https://github.com/volta-npo/28-hyperlocal-keyword-atlas/issues"
+  },
+  "author": "Volta OSS Division <volta.npo@gmail.com>",
+  "engines": {
+    "node": ">=20"
+  }
+}

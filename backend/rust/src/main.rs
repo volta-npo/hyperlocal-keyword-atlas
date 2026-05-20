@@ -3,8 +3,8 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 
 use hyperlocal_keyword_atlas_backend::{
-    blocks_release, release_fingerprint, release_score, sample_gates, sample_keywords,
-    score_keyword, PRODUCT_SLUG, PRODUCT_TITLE,
+    blocks_release, build_content_brief, cluster_keywords, release_fingerprint, release_score,
+    sample_gates, sample_keywords, score_keyword, PRODUCT_SLUG, PRODUCT_TITLE,
 };
 
 fn response(status: &str, body: &str) -> String {
@@ -13,7 +13,8 @@ fn response(status: &str, body: &str) -> String {
 
 fn score_body() -> String {
     let gates = sample_gates();
-    let keyword_scores = sample_keywords().iter().map(score_keyword).map(|score| {
+    let keywords = sample_keywords();
+    let keyword_scores = keywords.iter().map(score_keyword).map(|score| {
         format!(
             r#"{{"term":"{}","service":"{}","geography":"{}","intent":"{}","confidence":{},"priority":"{}","warnings":{}}}"#,
             score.term,
@@ -25,14 +26,37 @@ fn score_body() -> String {
             json_string_array(&score.warnings)
         )
     }).collect::<Vec<_>>().join(",");
+    let clusters = cluster_keywords(&keywords).iter().map(|cluster| {
+        let brief = build_content_brief(cluster);
+        format!(
+            r#"{{"key":"{}","service":"{}","geography":"{}","keyword_count":{},"average_confidence":{},"high_priority_count":{},"recommended_asset":"{}","brief":{{"title":"{}","meta_description":"{}","primary_cta":"{}","proof_requirements":{},"internal_links":{}}}}}"#,
+            cluster.key,
+            cluster.service,
+            cluster.geography,
+            cluster.keyword_count,
+            cluster.average_confidence,
+            cluster.high_priority_count,
+            cluster.recommended_asset,
+            json_escape(&brief.title),
+            json_escape(&brief.meta_description),
+            json_escape(&brief.primary_cta),
+            json_string_array(&brief.proof_requirements),
+            json_string_array(&brief.internal_links)
+        )
+    }).collect::<Vec<_>>().join(",");
     format!(
-        r#"{{"product":"{}","score":{},"blocked":{},"fingerprint":"{}","keywords":[{}]}}"#,
+        r#"{{"product":"{}","score":{},"blocked":{},"fingerprint":"{}","keywords":[{}],"clusters":[{}]}}"#,
         PRODUCT_SLUG,
         release_score(&gates),
         blocks_release(&gates),
         release_fingerprint(&gates),
-        keyword_scores
+        keyword_scores,
+        clusters
     )
+}
+
+fn json_escape(value: &str) -> String {
+    value.replace('\\', "\\\\").replace('"', "\\\"")
 }
 
 fn json_string_array(values: &[String]) -> String {
@@ -40,7 +64,7 @@ fn json_string_array(values: &[String]) -> String {
         "[{}]",
         values
             .iter()
-            .map(|value| format!(r#""{}""#, value.replace('"', "\\\"")))
+            .map(|value| format!(r#""{}""#, json_escape(value)))
             .collect::<Vec<_>>()
             .join(",")
     )
@@ -92,6 +116,12 @@ fn main() {
         println!(
             "keyword={} confidence={} priority={}",
             score.term, score.confidence, score.priority
+        );
+    }
+    for cluster in cluster_keywords(&sample_keywords()) {
+        println!(
+            "cluster={} keywords={} avg_confidence={}",
+            cluster.key, cluster.keyword_count, cluster.average_confidence
         );
     }
 }

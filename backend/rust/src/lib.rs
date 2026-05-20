@@ -46,6 +46,27 @@ pub struct KeywordScore {
     pub warnings: Vec<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct KeywordCluster {
+    pub key: String,
+    pub service: String,
+    pub geography: String,
+    pub keyword_count: usize,
+    pub average_confidence: u8,
+    pub high_priority_count: usize,
+    pub recommended_asset: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ContentBrief {
+    pub cluster_key: String,
+    pub title: String,
+    pub meta_description: String,
+    pub primary_cta: String,
+    pub proof_requirements: Vec<String>,
+    pub internal_links: Vec<String>,
+}
+
 pub fn status_points(status: &str) -> u8 {
     match status {
         "approved" => 100,
@@ -240,6 +261,94 @@ pub fn score_keyword(candidate: &KeywordCandidate) -> KeywordScore {
     }
 }
 
+pub fn cluster_keywords(candidates: &[KeywordCandidate]) -> Vec<KeywordCluster> {
+    let mut clusters: Vec<KeywordCluster> = Vec::new();
+    for candidate in candidates {
+        let score = score_keyword(candidate);
+        let key = format!(
+            "{}::{}",
+            candidate.service.to_lowercase(),
+            candidate.geography.to_lowercase()
+        );
+        if let Some(cluster) = clusters.iter_mut().find(|item| item.key == key) {
+            let total_confidence = cluster.average_confidence as usize * cluster.keyword_count
+                + score.confidence as usize;
+            cluster.keyword_count += 1;
+            cluster.average_confidence = (total_confidence / cluster.keyword_count) as u8;
+            if score.priority == "high" {
+                cluster.high_priority_count += 1;
+            }
+        } else {
+            let recommended_asset = if score.priority == "high" {
+                "service-area landing page"
+            } else if score.priority == "medium" {
+                "FAQ or local proof section"
+            } else {
+                "research backlog item"
+            };
+            clusters.push(KeywordCluster {
+                key,
+                service: candidate.service.clone(),
+                geography: candidate.geography.clone(),
+                keyword_count: 1,
+                average_confidence: score.confidence,
+                high_priority_count: usize::from(score.priority == "high"),
+                recommended_asset: recommended_asset.to_string(),
+            });
+        }
+    }
+    clusters.sort_by(|left, right| {
+        right
+            .high_priority_count
+            .cmp(&left.high_priority_count)
+            .then(right.average_confidence.cmp(&left.average_confidence))
+            .then(left.key.cmp(&right.key))
+    });
+    clusters
+}
+
+pub fn build_content_brief(cluster: &KeywordCluster) -> ContentBrief {
+    let title = format!(
+        "{} in {} | Local service guide",
+        title_case(&cluster.service),
+        cluster.geography
+    );
+    let meta_description = format!(
+        "Compare trusted {} options in {} with local proof, service details, FAQs, and clear next steps.",
+        cluster.service, cluster.geography
+    );
+    ContentBrief {
+        cluster_key: cluster.key.clone(),
+        title,
+        meta_description,
+        primary_cta: "Request a local quote or consultation".to_string(),
+        proof_requirements: vec![
+            "Owner-approved service description".to_string(),
+            "Local testimonial or project example".to_string(),
+            "Neighborhood-specific FAQ evidence".to_string(),
+        ],
+        internal_links: vec![
+            "Main services page".to_string(),
+            "Contact or booking page".to_string(),
+            "Related neighborhood page".to_string(),
+        ],
+    }
+}
+
+fn title_case(value: &str) -> String {
+    value
+        .split_whitespace()
+        .map(|word| {
+            let mut chars = word.chars();
+            match chars.next() {
+                Some(first) => format!("{}{}", first.to_uppercase(), chars.as_str()),
+                None => String::new(),
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
 pub fn sample_gates() -> Vec<ReleaseGate> {
     DOMAIN_ROWS
         .iter()
@@ -253,15 +362,27 @@ pub fn sample_gates() -> Vec<ReleaseGate> {
 }
 
 pub fn sample_keywords() -> Vec<KeywordCandidate> {
-    vec![KeywordCandidate {
-        term: "emergency plumber riverside".to_string(),
-        service: "plumbing".to_string(),
-        geography: "Riverside".to_string(),
-        intent: "transactional".to_string(),
-        source: "SERP competitor + Google Business Profile".to_string(),
-        evidence: "https://example.com/local-pack-capture".to_string(),
-        difficulty: 32,
-    }]
+    vec![
+        KeywordCandidate {
+            term: "emergency plumber riverside".to_string(),
+            service: "plumbing".to_string(),
+            geography: "Riverside".to_string(),
+            intent: "transactional".to_string(),
+            source: "SERP competitor + Google Business Profile".to_string(),
+            evidence: "https://example.com/local-pack-capture".to_string(),
+            difficulty: 32,
+        },
+        KeywordCandidate {
+            term: "same day leak repair riverside".to_string(),
+            service: "plumbing".to_string(),
+            geography: "Riverside".to_string(),
+            intent: "commercial".to_string(),
+            source: "Customer call notes + SERP".to_string(),
+            evidence: "Owner provided repeated call phrasing and local competitor examples"
+                .to_string(),
+            difficulty: 41,
+        },
+    ]
 }
 
 #[cfg(test)]
@@ -293,5 +414,16 @@ mod tests {
         assert_eq!(score.priority, "high");
         assert!(score.confidence >= 82);
         assert!(score.warnings.is_empty());
+    }
+
+    #[test]
+    fn keyword_clusters_generate_content_briefs() {
+        let clusters = cluster_keywords(&sample_keywords());
+        assert_eq!(clusters.len(), 1);
+        assert_eq!(clusters[0].keyword_count, 2);
+        assert!(clusters[0].average_confidence >= 80);
+        let brief = build_content_brief(&clusters[0]);
+        assert!(brief.title.contains("Riverside"));
+        assert_eq!(brief.proof_requirements.len(), 3);
     }
 }

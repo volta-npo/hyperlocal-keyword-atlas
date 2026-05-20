@@ -11,6 +11,10 @@ export const domain = {
     "Brief Readiness"
   ],
   "fields": [
+    {"id": "service-area-count", "label": "Service area count", "type": "number", "sample": 8, "placeholder": "Enter service area count"},
+    {"id": "content-capacity", "label": "Content capacity", "type": "number", "sample": 12, "placeholder": "Enter content capacity"},
+    {"id": "cms-target", "label": "CMS target", "type": "text", "sample": "WordPress service pages", "placeholder": "Enter CMS target"},
+    {"id": "ranking-review-cadence", "label": "Ranking review cadence", "type": "text", "sample": "Monthly Search Console review", "placeholder": "Enter ranking review cadence"},
     {
       "id": "organization-client",
       "label": "Organization / client",
@@ -76,17 +80,140 @@ export const domain = {
     "Competitors noted",
     "Difficulty confidence set",
     "Title/meta suggestions generated",
-    "SEO brief exported"
+    "SEO brief exported",
+    "Service/geography/intent modeled",
+    "Source confidence scored",
+    "POST scoring payload validated",
+    "SERP evidence attached",
+    "Keyword workspace provisioned",
+    "Cluster ownership assigned",
+    "Content calendar capacity matched",
+    "SERP evidence archive linked",
+    "Cannibalization risk reviewed",
+    "Local pack opportunity scored",
+    "CMS publishing queue created",
+    "Monthly rank review scheduled",
   ],
   "artifacts": [
     "Keyword CSV",
     "SEO brief",
-    "Title/meta pack"
+    "Title/meta pack",
+    "Keyword opportunity dashboard",
+    "Content calendar backlog",
+    "SERP evidence archive",
   ],
   "checks": [
     "Keyword needs service/geography/intent/source",
     "No unsupported search-volume claims",
-    "Difficulty confidence required"
+    "Difficulty confidence required",
+    "No search-volume claim without cited source",
+    "Landing page briefs require unique service/geography pair",
+    "Cannibalization warning must be reviewed before export",
   ],
-  "sampleClient": "Oak & Olive Cafe"
+  "sampleClient": "Oak & Olive Cafe",
+  "modules": [
+    {"name": "Opportunity pipeline", "description": "Ranks clusters by confidence, intent, difficulty, service priority, content capacity, and local proof strength."},
+    {"name": "Cannibalization guard", "description": "Detects duplicate service/geography targets, overlapping modifiers, and competing page briefs before publishing."},
+    {"name": "SERP evidence vault", "description": "Stores source type, capture date, competitor, local pack status, proof URL, and confidence notes."},
+    {"name": "Content calendar queue", "description": "Turns approved clusters into publishable page, FAQ, post, and GBP update briefs with owners and dates."},
+    {"name": "Rank review monitor", "description": "Monthly check-in template for impressions, clicks, ranking changes, and content refresh decisions."},
+    {"name": "API scoring console", "description": "Backend-grade scoring output for batch keyword validation, evidence warnings, and confidence distribution."}
+  ],
+  "saas": {
+    "customerSegments": [
+      "Student SEO pods researching neighborhood demand",
+      "Local service businesses planning service-area pages",
+      "Nonprofit chapters publishing local resource pages",
+      "Mentors validating evidence-backed SEO briefs"
+    ],
+    "pricingTiers": [
+      "Free: single keyword atlas export",
+      "Local Pro: cluster scoring, SERP vault, and page briefs",
+      "Agency: multi-location dashboards, API scoring, and CMS queues",
+      "Portfolio: chapter-wide opportunity benchmarks and bulk exports"
+    ],
+    "onboardingChecklist": [
+      "Create local SEO workspace",
+      "Import service and geography taxonomy",
+      "Attach SERP and customer evidence sources",
+      "Assign content owners and review cadence",
+      "Generate first service-area brief backlog"
+    ],
+    "successMetrics": [
+      "Every high-priority keyword has service/geography/intent/source",
+      "Cannibalization risk reviewed for all publishable clusters",
+      "At least one brief queued per priority service",
+      "Monthly rank review cadence scheduled"
+    ],
+    "dashboards": [
+      "Keyword opportunity pipeline",
+      "SERP source confidence",
+      "Content backlog by capacity",
+      "Rank review and refresh queue"
+    ],
+    "dataModel": [
+      "KeywordWorkspace",
+      "ServiceArea",
+      "KeywordCandidate",
+      "SourceEvidence",
+      "KeywordCluster",
+      "ContentBrief",
+      "CannibalizationWarning",
+      "RankReview"
+    ],
+    "permissions": [
+      "SEO lead: taxonomy and scoring settings",
+      "Researcher: candidate and evidence entry",
+      "Content editor: brief ownership and publishing status",
+      "Mentor: release certification and source review"
+    ],
+    "compliance": [
+      "Unsupported volume claims blocked",
+      "Evidence source retained for confidence score",
+      "Medical/legal SEO claims require owner approval",
+      "Client-safe briefs exclude private competitor notes"
+    ],
+    "lifecycle": [
+      "Discover",
+      "Score",
+      "Cluster",
+      "Brief",
+      "Publish",
+      "Measure",
+      "Refresh"
+    ],
+    "retentionSignals": [
+      "Rank review overdue",
+      "Approved cluster not published",
+      "Low confidence source needs replacement",
+      "Content refresh opportunity detected"
+    ],
+    "exportChannels": [
+      "Keyword CSV",
+      "SEO brief markdown",
+      "Title/meta pack",
+      "SERP evidence archive",
+      "Content calendar backlog",
+      "Rust scoring JSON"
+    ],
+    "playbooks": [
+      "Local keyword discovery workflow",
+      "SERP evidence qualification",
+      "Service-area landing page brief",
+      "Source confidence audit"
+    ],
+    "automations": [
+      "Keyword cluster scoring",
+      "SERP confidence calculation",
+      "Title/meta pack validation",
+      "Rust API release fingerprinting"
+    ],
+    "revenueModel": "Agency keyword workspace with paid service-area packs, API scoring, and brief exports",
+    "integrationTargets": [
+      "Google Search Console export",
+      "Google Business Profile categories",
+      "CSV SERP tools",
+      "CMS landing page briefs"
+    ]
+  }
 };
